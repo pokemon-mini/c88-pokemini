@@ -51,7 +51,7 @@ DEFSECT ".min_header", CODE
     LD NB,#0
     JRL __BAD_IRQ
     LD NB,#0
-    JRL __BAD_IRQ
+    JRL __power_button_IRQ
     LD NB,#0
     JRL __BAD_IRQ
     LD NB,#0
@@ -122,7 +122,7 @@ void _start_cpt( void )
 }
 
 _interrupt (30)
-void power_button(void) 
+void _power_button_IRQ(void) 
 {
 	#pragma asm
 	LD	[BR:029h],#080h
