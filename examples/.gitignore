@@ -1,0 +1,7 @@
+*.map
+*.hex
+*.obj
+*.out
+*.abs
+*.min
+*.d
