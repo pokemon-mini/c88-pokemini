@@ -1,148 +1,142 @@
 // -*- mode: conf -*-
 cpu {
-////////////////////////////////////////////////////////////////////////
-//
-//	 A D R E S S I N G   M O D E S 
-//
-//
+  /////////////////////////////////////////////////////////
+  //
+  // program memory short
+  // - Section CODE SHORT (object format id-nbr Y3)
+  // - 8 bits addressable
+  // - 0-32k address range mapped to 0-32k address space
+  //         (via addressing mode code)
+  //          
+  amode code_short {
+    attribute Y3;
+    mau 8;
+    map src=0 size=32k dst=0 amode=code;
+  }
 
-	/////////////////////////////////////////////////////////
-	//
-	// program memory short
-	// - Section CODE SHORT (object format id-nbr Y3)
-	// - 8 bits addressable
-	// - 0-32k address range mapped to 0-32k address space
-	//         (via addressing mode code)
-	//          
-	amode code_short {
-		attribute Y3;
-		mau 8;
-		map src=0 size=32k dst=0 amode=code;
-	}
+  /////////////////////////////////////////////////////////
+  //
+  // program memory/ constant rom data
+  // - Section CODE (object format id-nbr Y1)
+  // - 8 bits addressable
+  // - 0-8M address range mapped to 0-8M address space
+  //        (via addressing mode data)
+  //
+  amode code {
+    attribute Y1;
+    mau 8;
+    map src=0 size=8M dst=0 space=SMC88_space;
+  }
 
-	/////////////////////////////////////////////////////////
-	//
-	// program memory/ constant rom data
-	// - Section CODE (object format id-nbr Y1)
-	// - 8 bits addressable
-	// - 0-8M address range mapped to 0-8M address space
-	//        (via addressing mode data)
-	//
-	amode code {
-		attribute Y1;
-		mau 8;
-		map src=0 size=8M dst=0 space=SMC88_space;
-	}
+  /////////////////////////////////////////////////////////
+  //  data memory tiny
+  // - Section DATA TINY (object format id-nbr Y5)
+  // - 8 bits addressable
+  // - 0-256 address range mapped to 256-512 address space
+  //         (via addressing mode data_short)
+  //          
+  amode data_tiny {
+    attribute Y5;
+    mau 8;
+    map src=0 size=0x100 align=0x100 amode=data_short;
+  }
 
-	/////////////////////////////////////////////////////////
-	//  data memory tiny
-	// - Section DATA TINY (object format id-nbr Y5)
-	// - 8 bits addressable
-	// - 0-256 address range mapped to 256-512 address space
-	//         (via addressing mode data_short)
-	//          
-	amode data_tiny {
-		attribute Y5;
-		mau 8;
-		map src=0 size=0x100 align=0x100 amode=data_short;
-	}
+  /////////////////////////////////////////////////////////
+  //
+  // data memory short
+  // - Section DATA SHORT (object format id-nbr Y4)
+  // - 8 bits addressable
+  // - 0-64k address range mapped to 0-64k address space 
+  //     (via adressing mode data)
+  //
+  amode data_short {
+    attribute Y4;
+    mau 8;
+    map src=0 size=64k dst=0 amode=data;
+  }
 
-	/////////////////////////////////////////////////////////
-	//
-	// data memory short
-	// - Section DATA SHORT (object format id-nbr Y4)
-	// - 8 bits addressable
-	// - 0-64k address range mapped to 0-64k address space 
-	//	   (via adressing mode data)
-	//
-	amode data_short {
-		attribute Y4;
-		mau 8;
-		map src=0 size=64k dst=0 amode=data;
-	}
+  /////////////////////////////////////////////////////////
+  //
+  // data memory 
+  // - Section DATA (object format id-nbr Y2)
+  // - 8 bits addressable
+  // - 0-16M address range mapped to 0-16M address space
+  //
+  amode data {
+    attribute Y2;
+    mau 8;
+    map src=0 size=16M dst=0 space=SMC88_space;
+  }
 
-	/////////////////////////////////////////////////////////
-	//
-	// data memory 
-	// - Section DATA (object format id-nbr Y2)
-	// - 8 bits addressable
-	// - 0-16M address range mapped to 0-16M address space
-	//
-	amode data {
-		attribute Y2;
-		mau 8;
-		map src=0 size=16M dst=0 space=SMC88_space;
-	}
-
-	/////////////////////////////////////////////////////////
-	//
-	// address space 
-	// - 8 bits addressable
-	// - 0-16M address range mapped to 0-16M bus
-	//
-	space SMC88_space {
-		mau 8;
-		map src=0 size=16M dst=0 bus=SMC88_bus label=total_range;
-	}
+  /////////////////////////////////////////////////////////
+  //
+  // address space 
+  // - 8 bits addressable
+  // - 0-16M address range mapped to 0-16M bus
+  //
+  space SMC88_space {
+    mau 8;
+    map src=0 size=16M dst=0 bus=SMC88_bus label=total_range;
+  }
 
 
-	/////////////////////////////////////////////////////////
-	//
-	// bus 
-	// - 8 bits addressable
-	// - 0-16M address range mapped to 0-16M internal bus 
-	//
-	bus SMC88_bus {
-		mau 8;
-		map src=0 size=16M dst=0 bus=internal_bus;
-	}
+  /////////////////////////////////////////////////////////
+  //
+  // bus 
+  // - 8 bits addressable
+  // - 0-16M address range mapped to 0-16M internal bus 
+  //
+  bus SMC88_bus {
+    mau 8;
+    map src=0 size=16M dst=0 bus=internal_bus;
+  }
 
-	bus internal_bus {
-		mau 8;
-		mem addr=0        chips=bios;
-		mem addr=0x1000   chips=ram;
-		mem addr=0x2000   chips=io_regs;
-		mem addr=0x2100   chips=cart;
-	}
+  bus internal_bus {
+    mau 8;
+    mem addr=0        chips=bios;
+    mem addr=0x1000   chips=ram;
+    mem addr=0x2000   chips=io_regs;
+    mem addr=0x2100   chips=cart;
+  }
 
 ////////////////////////////////////////////////////////////////////////
 //
-//	I N T E R N A L   C H I P S
-//	
+//  I N T E R N A L   C H I P S
+//  
 //
 
-	/////////////////////////////////////////////////////////
-	// Internal bios 
-	// special (cannot allocate in this area)
-	// 8 bits addressable
-	// 1000(hex) size
-	//
-	chips	bios	attr=s mau=8 size=0x1000;
+  /////////////////////////////////////////////////////////
+  // Internal bios 
+  // special (cannot allocate in this area)
+  // 8 bits addressable
+  // 1000(hex) size
+  //
+  chips  bios  attr=s mau=8 size=0x1000;
 
-	/////////////////////////////////////////////////////////
-	// Internal ram 
-	// writable
-	// 8 bits addressable
-	// 1000(hex) size
-	//
-	chips	ram	attr=w mau=8 size=0x1000;
+  /////////////////////////////////////////////////////////
+  // Internal ram 
+  // writable
+  // 8 bits addressable
+  // 1000(hex) size
+  //
+  chips  ram  attr=w mau=8 size=0x1000;
 
-	/////////////////////////////////////////////////////////
-	// Hardware registers
-	// writable
-	// 8 bits addressable
-	// F00(hex) size
-	//	
-	chips	io_regs attr=w mau=8 size=0xFF;
+  /////////////////////////////////////////////////////////
+  // Hardware registers
+  // writable
+  // 8 bits addressable
+  // F00(hex) size
+  //  
+  chips  io_regs attr=w mau=8 size=0xFF;
 
-	/////////////////////////////////////////////////////////
-	// Cartridge ROM
-	// read-only
-	// 8 bits addressable
-	//  1FDF00(hex) size	(~2MB)
-	//
-	chips	cart	attr=r mau=8 size=0x1FDF00;
+  /////////////////////////////////////////////////////////
+  // Cartridge ROM
+  // read-only
+  // 8 bits addressable
+  //  1FDF00(hex) size  (~2MB)
+  //
+  chips  cart  attr=r mau=8 size=0x1FDF00;
 
 
-	regsfr	reg88.dat
+  regsfr  reg88.dat
 }
