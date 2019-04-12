@@ -16,6 +16,73 @@ void			_start	( void );
 extern int		main	( void );
 extern void		_copytable( void );
 
+#pragma asm
+DEFSECT ".min_header", CODE
+    SECT ".min_header"
+    ASCII "MN"
+    LD NB,#0
+    JRL __START
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    LD NB,#0
+    JRL __BAD_IRQ
+    ASCII "NINTENDO"
+    ASCII "HELO"
+    ASCII "HELLO WORLD!"
+    ASCII "2P"
+    DB 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__BAD_IRQ:
+    JR __BAD_IRQ
+#pragma endasm
+
 _interrupt( 0x0000 )	/* Startup vector */
 void _start_cpt( void )
 {

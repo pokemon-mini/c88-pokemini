@@ -9,10 +9,17 @@ TARGET=helloworld
 SOURCES = src/cstart.c src/main.c
 OBJECTS = $(SOURCES:.c=.obj)
 
-all: $(TARGET).abs
+.PHONY: all, run
+all: $(TARGET).min
 
-%.abs %.map: %.out
-	$(LC88) -d pokemini -M -o $@ $<
+run: $(TARGET).min
+	PokeMiniD $<
+
+%.min: %.hex
+	srec_cat $< -o $@ -binary
+
+%.hex %.map: %.out
+	$(LC88) -e -d pokemini -M -f2 -o $@ $<
 
 $(TARGET).out: $(OBJECTS)
 	$(CC88) -Ml -cl -v -o $@ $^
