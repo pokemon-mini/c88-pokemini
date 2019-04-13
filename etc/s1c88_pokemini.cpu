@@ -94,7 +94,8 @@ cpu {
   bus internal_bus {
     mau 8;
     mem addr=0        chips=bios;
-    mem addr=0x1000   chips=ram;
+    mem addr=0x1000   chips=prc_ram;
+    mem addr=0x14E0   chips=ram;
     mem addr=0x2000   chips=io_regs;
     mem addr=0x2100   chips=cart;
   }
@@ -113,13 +114,15 @@ cpu {
   //
   chips  bios  attr=s mau=8 size=0x1000;
 
+
   /////////////////////////////////////////////////////////
   // Internal ram 
   // writable
   // 8 bits addressable
   // 1000(hex) size
   //
-  chips  ram  attr=w mau=8 size=0x1000;
+  chips prc_ram attr=s mau=8 size=0x4E0;
+  chips  ram  attr=w mau=8 size=0xB20;
 
   /////////////////////////////////////////////////////////
   // Hardware registers

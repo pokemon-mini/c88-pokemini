@@ -96,10 +96,7 @@ software {
             // allocate far data,
             // heap (growing upwards)
             // stack (growing downwards)
-            // reservation for CrossView debugger
-            // (only when using '-g')
             section selection=w;
-            reserved label=framebuffer length=0x10;
             stack;
           }
         }
