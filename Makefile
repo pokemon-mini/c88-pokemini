@@ -34,10 +34,10 @@ c88tools: temp-setup
 	rm -rf system
 
 temp-setup: s5u1c88000c16.zip
-	unzip -f $< -d $@
+	unzip $< -d $@
 
 bin-windows: bin-windows.zip
-	unzip -f $<
+	unzip -o $<
 	touch $@
 
 .PRECIOUS: bin-windows.zip
