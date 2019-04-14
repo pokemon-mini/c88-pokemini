@@ -1,5 +1,5 @@
 const uint8_t hello_tile_count = 192;
-const uint8_t hello_tiles[] = {
+const uint8_t _rom hello_tiles[] _at(0x10000) = {
     // Tile $00
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
     // Tile $01

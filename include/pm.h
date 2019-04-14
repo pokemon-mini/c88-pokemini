@@ -1,101 +1,108 @@
 #ifndef _PM_H
 #define _PM_H
 
-#define BIT0              ((char)(1<<0))
-#define BIT1              ((char)(1<<1))
-#define BIT2              ((char)(1<<2))
-#define BIT3              ((char)(1<<3))
-#define BIT4              ((char)(1<<4))
-#define BIT5              ((char)(1<<5))
-#define BIT6              ((char)(1<<6))
-#define BIT7              ((char)(1<<7))
+#define _BV(bit) ((unsigned char)(1<<(bit)))
 
 /* REGISTERS */
 
 #define REG_BASE	        0x2000
-#define TILEMAP           ((char *)(0x1360))
-
-struct oam_attr {
-  char x;
-  char y;
-  char tile;
-  char ctrl;
-};
-#define OAM               ((struct oam_attr *)(0x1300))
-#define OAM_FLIPH         (1<<0)
-#define OAM_FLIPV         (1<<1)
-#define OAM_INVERT        (1<<2)
-#define OAM_ENABLE        (1<<3)
 
 /* Seconds timer */
-#define SEC_CTRL          (*(char *)(REG_BASE+0x08))
-#define SEC_CNT           (*(long *)(REG_BASE+0x09))
-#define SEC_CNT_LO        (*(char *)(REG_BASE+0x09))
-#define SEC_CNT_MID       (*(char *)(REG_BASE+0x0A))
-#define SEC_CNT_HI        (*(char *)(REG_BASE+0x0B))
+#define SEC_CTRL          (*(volatile unsigned char *) (REG_BASE+0x08))
+#define SEC_CNT           (*(volatile unsigned int *) (REG_BASE+0x09))
+#define SEC_CNT_LO        (*(volatile unsigned char *) (REG_BASE+0x09))
+#define SEC_CNT_MID       (*(volatile unsigned char *) (REG_BASE+0x0A))
+#define SEC_CNT_HI        (*(volatile unsigned char *) (REG_BASE+0x0B))
 
 /* Timer 1 */
-#define TMR1_CTRL         (*(int *) (REG_BASE+0x30))
-#define TMR1_SCALE        (*(char *)(REG_BASE+0x18))
-#define TMR1_OSC          (*(char *)(REG_BASE+0x19))
-#define TMR1_PRE          (*(int *) (REG_BASE+0x32))
-#define TMR1_PVT          (*(int *) (REG_BASE+0x34))
-#define TMR1_CNT          (*(int *) (REG_BASE+0x36))
+#define TMR1_SCALE        (*(volatile unsigned char *) (REG_BASE+0x18))
+#define TMR1_OSC          (*(volatile unsigned char *) (REG_BASE+0x19))
+
+#define TMR1_CTRL         (*(volatile unsigned int *) (REG_BASE+0x30))
+#define TMR1_CTRL_L       (*(volatile unsigned char *) (REG_BASE+0x30))
+#define TMR1_CTRL_H       (*(volatile unsigned char *) (REG_BASE+0x31))
+#define TMR1_PRE          (*(volatile unsigned int *) (REG_BASE+0x32))
+#define TMR1_PRE_L        (*(volatile unsigned char *) (REG_BASE+0x32))
+#define TMR1_PRE_H        (*(volatile unsigned char *) (REG_BASE+0x33))
+#define TMR1_PVT          (*(volatile unsigned int *) (REG_BASE+0x34))
+#define TMR1_PVT_L        (*(volatile unsigned char *) (REG_BASE+0x34))
+#define TMR1_PVT_H        (*(volatile unsigned char *) (REG_BASE+0x35))
+#define TMR1_CNT          (*(volatile unsigned int *) (REG_BASE+0x36))
+#define TMR1_CNT_L        (*(volatile unsigned char *) (REG_BASE+0x36))
+#define TMR1_CNT_H        (*(volatile unsigned char *) (REG_BASE+0x37))
 
 /* Timer 2 */
-#define TMR2_CTRL         (*(int *) (REG_BASE+0x38))
-#define TMR2_SCALE        (*(char *)(REG_BASE+0x1A))
-#define TMR2_OSC          (*(char *)(REG_BASE+0x1B))
-#define TMR2_PRE          (*(int *) (REG_BASE+0x3A))
-#define TMR2_PVT          (*(int *) (REG_BASE+0x3C))
-#define TMR2_CNT          (*(int *) (REG_BASE+0x3E))
+#define TMR2_SCALE        (*(volatile unsigned char *) (REG_BASE+0x1A))
+#define TMR2_OSC          (*(volatile unsigned char *) (REG_BASE+0x1B))
 
-/* Timer 3 */
-#define TMR3_CTRL         (*(int *) (REG_BASE+0x48))
-#define TMR3_SCALE        (*(char *)(REG_BASE+0x1C))
-#define TMR3_OSC          (*(char *)(REG_BASE+0x1D))
-#define TMR3_PRE          (*(int *) (REG_BASE+0x4A))
-#define TMR3_PVT          (*(int *) (REG_BASE+0x4C))
-#define TMR3_CNT          (*(int *) (REG_BASE+0x4E))
+#define TMR2_CTRL         (*(volatile unsigned int *) (REG_BASE+0x38))
+#define TMR2_CTRL_L       (*(volatile unsigned char *) (REG_BASE+0x38))
+#define TMR2_CTRL_H       (*(volatile unsigned char *) (REG_BASE+0x39))
+#define TMR2_PRE          (*(volatile unsigned int *) (REG_BASE+0x3A))
+#define TMR2_PRE_L        (*(volatile unsigned char *) (REG_BASE+0x3A))
+#define TMR2_PRE_H        (*(volatile unsigned char *) (REG_BASE+0x3B))
+#define TMR2_PVT          (*(volatile unsigned int *) (REG_BASE+0x3C))
+#define TMR2_PVT_L        (*(volatile unsigned char *) (REG_BASE+0x3C))
+#define TMR2_PVT_H        (*(volatile unsigned char *) (REG_BASE+0x3D))
+#define TMR2_CNT          (*(volatile unsigned int *) (REG_BASE+0x3E))
+#define TMR2_CNT_L        (*(volatile unsigned char *) (REG_BASE+0x3E))
+#define TMR2_CNT_H        (*(volatile unsigned char *) (REG_BASE+0x3F))
 
 /* 256 Hz Timer */
-#define TMR256_CTRL       (*(char *)(REG_BASE+0x40))
-#define TMR256_CNT        (*(char *)(REG_BASE+0x41))
+#define TMR256_CTRL       (*(volatile unsigned char *) (REG_BASE+0x40))
+#define TMR256_CNT        (*(volatile unsigned char *) (REG_BASE+0x41))
+
+/* Timer 3 */
+#define TMR3_SCALE        (*(volatile unsigned char *) (REG_BASE+0x1C))
+#define TMR3_OSC          (*(volatile unsigned char *) (REG_BASE+0x1D))
+
+#define TMR3_CTRL         (*(volatile unsigned int *) (REG_BASE+0x48))
+#define TMR3_CTRL_L       (*(volatile unsigned char *) (REG_BASE+0x48))
+#define TMR3_CTRL_H       (*(volatile unsigned char *) (REG_BASE+0x49))
+#define TMR3_PRE          (*(volatile unsigned int *) (REG_BASE+0x4A))
+#define TMR3_PRE_L        (*(volatile unsigned char *) (REG_BASE+0x4A))
+#define TMR3_PRE_H        (*(volatile unsigned char *) (REG_BASE+0x4B))
+#define TMR3_PVT          (*(volatile unsigned int *) (REG_BASE+0x4C))
+#define TMR3_PVT_L        (*(volatile unsigned char *) (REG_BASE+0x4C))
+#define TMR3_PVT_H        (*(volatile unsigned char *) (REG_BASE+0x4D))
+#define TMR3_CNT          (*(volatile unsigned int *) (REG_BASE+0x4E))
+#define TMR3_CNT_L        (*(volatile unsigned char *) (REG_BASE+0x4E))
+#define TMR3_CNT_H        (*(volatile unsigned char *) (REG_BASE+0x4F))
 
 /* System */
-#define SYS_CTRL1         (*(char *)(REG_BASE+0x00))
-#define SYS_CTRL2         (*(char *)(REG_BASE+0x01))
-#define SYS_CTRL3         (*(char *)(REG_BASE+0x02))
-#define SYS_BATT          (*(char *)(REG_BASE+0x10))
-#define KEY_PAD           (*(char *)(REG_BASE+0x52))
-#define CART_BUS          (*(char *)(REG_BASE+0x53))
-#define IO_DIR            (*(char *)(REG_BASE+0x60))
-#define IO_DATA           (*(char *)(REG_BASE+0x61))
-#define LCD_CTRL          (*(char *)(REG_BASE+0xFE))
-#define LCD_DATA          (*(char *)(REG_BASE+0xFF))
+#define SYS_CTRL1         (*(volatile unsigned char *)(REG_BASE+0x00))
+#define SYS_CTRL2         (*(volatile unsigned char *)(REG_BASE+0x01))
+#define SYS_CTRL3         (*(volatile unsigned char *)(REG_BASE+0x02))
+#define SYS_BATT          (*(volatile unsigned char *)(REG_BASE+0x10))
+#define KEY_PAD           (*(volatile unsigned char *)(REG_BASE+0x52))
+#define CART_BUS          (*(volatile unsigned char *)(REG_BASE+0x53))
+#define IO_DIR            (*(volatile unsigned char *)(REG_BASE+0x60))
+#define IO_DATA           (*(volatile unsigned char *)(REG_BASE+0x61))
+#define LCD_CTRL          (*(volatile unsigned char *)(REG_BASE+0xFE))
+#define LCD_DATA          (*(volatile unsigned char *)(REG_BASE+0xFF))
 
-#define KEY_A             (1<<0)
-#define KEY_B             (1<<1)
-#define KEY_C             (1<<2)
-#define KEY_UP            (1<<3)
-#define KEY_DOWN          (1<<4)
-#define KEY_LEFT          (1<<5)
-#define KEY_RIGHT         (1<<6)
-#define KEY_POWER         (1<<7)
+#define KEY_A             _BV(0)
+#define KEY_B             _BV(1)
+#define KEY_C             _BV(2)
+#define KEY_UP            _BV(3)
+#define KEY_DOWN          _BV(4)
+#define KEY_LEFT          _BV(5)
+#define KEY_RIGHT         _BV(6)
+#define KEY_POWER         _BV(7)
 
 
 /* IRQs */
-#define IRQ_PRI1          (*(char *)(REG_BASE+0x20))
-#define IRQ_PRI2          (*(char *)(REG_BASE+0x21))
-#define IRQ_PRI3          (*(char *)(REG_BASE+0x22))
-#define IRQ_ENA1          (*(char *)(REG_BASE+0x23))
-#define IRQ_ENA2          (*(char *)(REG_BASE+0x24))
-#define IRQ_ENA3          (*(char *)(REG_BASE+0x25))
-#define IRQ_ENA4          (*(char *)(REG_BASE+0x26))
-#define IRQ_ACT1          (*(char *)(REG_BASE+0x27))
-#define IRQ_ACT2          (*(char *)(REG_BASE+0x28))
-#define IRQ_ACT3          (*(char *)(REG_BASE+0x29))
-#define IRQ_ACT4          (*(char *)(REG_BASE+0x2A))
+#define IRQ_PRI1          (*(volatile unsigned char *)(REG_BASE+0x20))
+#define IRQ_PRI2          (*(volatile unsigned char *)(REG_BASE+0x21))
+#define IRQ_PRI3          (*(volatile unsigned char *)(REG_BASE+0x22))
+#define IRQ_ENA1          (*(volatile unsigned char *)(REG_BASE+0x23))
+#define IRQ_ENA2          (*(volatile unsigned char *)(REG_BASE+0x24))
+#define IRQ_ENA3          (*(volatile unsigned char *)(REG_BASE+0x25))
+#define IRQ_ENA4          (*(volatile unsigned char *)(REG_BASE+0x26))
+#define IRQ_ACT1          (*(volatile unsigned char *)(REG_BASE+0x27))
+#define IRQ_ACT2          (*(volatile unsigned char *)(REG_BASE+0x28))
+#define IRQ_ACT3          (*(volatile unsigned char *)(REG_BASE+0x29))
+#define IRQ_ACT4          (*(volatile unsigned char *)(REG_BASE+0x2A))
 
 // IRQ priority bit definitions
 #define PRI1_PRC(x)       ((x&0x3)<<6)
@@ -135,61 +142,62 @@ struct oam_attr {
                           IRQ_PRI3 |= (x&0x3)<<0;
 
 // IRQ_ENA1/IRQ_ACT1 registers
-#define IRQ1_PRC_COMPLETE  BIT7 // 0x03
-#define IRQ1_DIV_OVF       BIT6 // 0x04
-#define IRQ1_TIM2_HI_UF    BIT5 // 0x05
-#define IRQ1_TIM2_LO_UF    BIT4 // 0x06
-#define IRQ1_TIM1_HI_UF    BIT3 // 0x07
-#define IRQ1_TIM1_LO_UF    BIT2 // 0x08
-#define IRQ1_TIM3_HI_UF    BIT1 // 0x09
-#define IRQ1_TIM3_PIVOT    BIT0 // 0x0A
+#define IRQ1_PRC_COMPLETE  _BV(7) // 0x03
+#define IRQ1_DIV_OVF       _BV(6) // 0x04
+#define IRQ1_TIM2_HI_UF    _BV(5) // 0x05
+#define IRQ1_TIM2_LO_UF    _BV(4) // 0x06
+#define IRQ1_TIM1_HI_UF    _BV(3) // 0x07
+#define IRQ1_TIM1_LO_UF    _BV(2) // 0x08
+#define IRQ1_TIM3_HI_UF    _BV(1) // 0x09
+#define IRQ1_TIM3_PIVOT    _BV(0) // 0x0A
 
 // IRQ_ENA2/IRQ_ACT2 registers
-#define IRQ2_32HZ          BIT5 // 0x0B
-#define IRQ2_8HZ           BIT4 // 0x0C
-#define IRQ2_2HZ           BIT3 // 0x0D
-#define IRQ2_1HZ           BIT2 // 0x0E
-#define IRQ2_CART_EJECT    BIT1 // 0x13
-#define IRQ2_CART          BIT0 // 0x14
+#define IRQ2_32HZ          _BV(5) // 0x0B
+#define IRQ2_8HZ           _BV(4) // 0x0C
+#define IRQ2_2HZ           _BV(3) // 0x0D
+#define IRQ2_1HZ           _BV(2) // 0x0E
+#define IRQ2_CART_EJECT    _BV(1) // 0x13
+#define IRQ2_CART          _BV(0) // 0x14
 
 // IRQ_ENA3/IRQ_ACT3 registers
-#define IRQ3_KEYPOWER      BIT7 // 0x15
-#define IRQ3_KEYRIGHT      BIT6 // 0x16
-#define IRQ3_KEYLEFT       BIT5 // 0x17
-#define IRQ3_KEYDOWN       BIT4 // 0x18
-#define IRQ3_KEYUP         BIT3 // 0x19
-#define IRQ3_KEYC          BIT2 // 0x1A
-#define IRQ3_KEYB          BIT1 // 0x1B
-#define IRQ3_KEYA          BIT0 // 0x1C
+#define IRQ3_KEYPOWER      _BV(7) // 0x15
+#define IRQ3_KEYRIGHT      _BV(6) // 0x16
+#define IRQ3_KEYLEFT       _BV(5) // 0x17
+#define IRQ3_KEYDOWN       _BV(4) // 0x18
+#define IRQ3_KEYUP         _BV(3) // 0x19
+#define IRQ3_KEYC          _BV(2) // 0x1A
+#define IRQ3_KEYB          _BV(1) // 0x1B
+#define IRQ3_KEYA          _BV(0) // 0x1C
 
 // IRQ_ENA4/IRQ_ACT4 registers
-#define IRQ4_IR_RECV       BIT7 // 0x0F
-#define IRQ4_SHOCK         BIT6 // 0x10
+#define IRQ4_IR_RECV       _BV(7) // 0x0F
+#define IRQ4_SHOCK         _BV(6) // 0x10
 
 
 /* Audio */
-#define AUD_CTRL       (*(char *)(REG_BASE+0x70))
-#define AUD_VOL        (*(char *)(REG_BASE+0x71))
+#define AUD_CTRL       (*(volatile unsigned char *)(REG_BASE+0x70))
+#define AUD_VOL        (*(volatile unsigned char *)(REG_BASE+0x71))
 
 /* PRC */
-#define PRC_MODE       (*(char *)(REG_BASE+0x80))
-#define PRC_RATE       (*(char *)(REG_BASE+0x81))
-#define PRC_MAP        (*(long *)(REG_BASE+0x82))
-#define PRC_MAP_LO     (*(char *)(REG_BASE+0x82))
-#define PRC_MAP_MID    (*(char *)(REG_BASE+0x83))
-#define PRC_MAP_HI     (*(char *)(REG_BASE+0x84))
-#define PRC_SCROLL_X   (*(char *)(REG_BASE+0x86))
-#define PRC_SCROLL_Y   (*(char *)(REG_BASE+0x85))
-#define PRC_SPR        (*(long *)(REG_BASE+0x87))
-#define PRC_SPR_LO     (*(char *)(REG_BASE+0x87))
-#define PRC_SPR_MID    (*(char *)(REG_BASE+0x88))
-#define PRC_SPR_HI     (*(char *)(REG_BASE+0x89))
-#define PRC_CONT       (*(char *)(REG_BASE+0x8A))
+#define PRC_MODE       (*(volatile unsigned char *)(REG_BASE+0x80))
+#define PRC_RATE       (*(volatile unsigned char *)(REG_BASE+0x81))
+#define PRC_MAP        (*(volatile void _far **) (REG_BASE+0x82))
+#define PRC_MAP_LO     (*(volatile unsigned char *)(REG_BASE+0x82))
+#define PRC_MAP_MID    (*(volatile unsigned char *)(REG_BASE+0x83))
+#define PRC_MAP_HI     (*(volatile unsigned char *)(REG_BASE+0x84))
+#define PRC_SCROLL_X   (*(volatile unsigned char *)(REG_BASE+0x86))
+#define PRC_SCROLL_Y   (*(volatile unsigned char *)(REG_BASE+0x85))
+#define PRC_SPR        (*(volatile void _far **) (REG_BASE+0x87))
+#define PRC_SPR_LO     (*(volatile unsigned char *)(REG_BASE+0x87))
+#define PRC_SPR_MID    (*(volatile unsigned char *)(REG_BASE+0x88))
+#define PRC_SPR_HI     (*(volatile unsigned char *)(REG_BASE+0x89))
+#define PRC_CONT       (*(volatile unsigned char *)(REG_BASE+0x8A))
 
-#define MAP_INVERT      (1<<0)
-#define MAP_ENABLE      (1<<1)
-#define SPRITE_ENABLE   (1<<2)
-#define COPY_ENABLE     (1<<3)
+#define MAP_INVERT      _BV(0)
+#define MAP_ENABLE      _BV(1)
+#define SPRITE_ENABLE   _BV(2)
+#define COPY_ENABLE     _BV(3)
+
 #define MAP_12X16       (0<<4)  // 96*128 pixels
 #define MAP_16X12       (1<<4)  // 128*96 pixels
 #define MAP_24X8        (2<<4)  // 192*64 pixels
@@ -203,6 +211,21 @@ struct oam_attr {
 #define RATE_18FPS      (5<<1)  // 72Hz/4
 //#define RATE_12FPS      (6<<1)  // 72Hz/6
 #define RATE_9FPS       (7<<1)  // 72Hz/8
+
+#define TILEMAP           ((volatile unsigned char *)(0x1360))
+
+typedef volatile struct {
+    volatile unsigned char x;
+    volatile unsigned char y;
+    volatile unsigned char tile;
+    volatile unsigned char ctrl;
+} oam_sprite_t;
+
+#define OAM               ((oam_sprite_t *)(0x1300))
+#define OAM_FLIPH         _BV(0)
+#define OAM_FLIPV         _BV(1)
+#define OAM_INVERT        _BV(2)
+#define OAM_ENABLE        _BV(3)
 
 /* CONSTANTS */
 
@@ -219,6 +242,10 @@ struct oam_attr {
 #define CLK_CPU_3906HZ  6
 #define CLK_CPU_976HZ   6
 
+_inline void wait_vsync(void) {
+    IRQ_ACT1 = IRQ1_PRC_COMPLETE;
+    while (!(IRQ_ACT1 & IRQ1_PRC_COMPLETE));
+}
 
 
 #endif /* PM_H */

@@ -53,7 +53,7 @@ software {
             // allocate program code, 
             // then allocate romdata,
             // initialization data,
-            section .min_header addr=0x2100;
+            reserved length=0xD0 addr=0x2100;
             section selection=x;
             section selection=r;
             copy;

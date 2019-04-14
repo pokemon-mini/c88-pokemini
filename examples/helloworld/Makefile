@@ -1,32 +1,70 @@
 TOOLCHAIN_DIR := ../..
-WINE_PREFIX = $(realpath $(TOOLCHAIN_DIR)/wineprefix)
-WINE = WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
-CC88 = $(WINE) $(TOOLCHAIN_DIR)/c88tools/bin/cc88
-LC88 = $(WINE) $(TOOLCHAIN_DIR)/c88tools/bin/lc88
+TARGET = helloworld
 
-TARGET=helloworld
+C_SOURCES = src/isr.c src/main.c
+ASM_SOURCES = src/startup.asm
 
-SOURCES = src/cstart.c src/main.c
-OBJECTS = $(SOURCES:.c=.obj)
+ifeq ($(OS), Windows_NT)
+	WINE :=
+	POKEMINID := $(TOOLCHAIN_DIR)/bin/PokeMiniD
+	SREC_CAT := $(TOOLCHAIN_DIR)/bin/srec_cat
+	POKEFLASH := $(TOOLCHAIN_DIR)/bin/pokeflash
+else # In Unix we use wine and assume the tools are in the PATH
+	WINE_PREFIX := $(realpath $(TOOLCHAIN_DIR)/wineprefix)
+	WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
+	SREC_CAT := srec_cat
+	POKEMINID := PokeMiniD
+	POKEFLASH := pokeflash
+endif
 
-.PHONY: all, run
+C88_DIR := $(TOOLCHAIN_DIR)/c88tools/bin
+C88 := $(WINE) $(C88_DIR)/c88
+CC88 := $(WINE) $(C88_DIR)/cc88
+LC88 := $(WINE) $(C88_DIR)/lc88
+
+LDFLAGS += -Md -cl -v
+CFLAGS += -Md -g -I$(TOOLCHAIN_DIR)/include
+LCFLAGS += -e -d pokemini -M
+
+OBJS += $(C_SOURCES:.c=.obj)
+OBJS += $(ASM_SOURCES:.asm=.obj)
+COMPILED_ASM = $(C_SOURCES:.c=.c.asm)
+
+.PHONY: all, run, assembly
 all: $(TARGET).min
 
+assembly: $(COMPILED_ASM)
+
 run: $(TARGET).min
-	PokeMiniD $<
+	$(POKEMINID) $<
+
+flash: $(TARGET).min
+	$(POKEFLASH) /w $<
 
 %.min: %.hex
-	srec_cat $< -o $@ -binary
+	$(SREC_CAT) $< -o $@ -binary
 
 %.hex %.map: %.out
-	$(LC88) -e -d pokemini -M -f2 -o $@ $<
+	$(LC88) $(LCFLAGS) -f2 -o $@ $<
 
-$(TARGET).out: $(OBJECTS)
-	$(CC88) -Ml -cl -v -o $@ $^
+%.abs %.map: %.out
+	$(LC88) $(LCFLAGS) -o $@ $<
+
+$(TARGET).out: $(OBJS)
+	$(CC88) $(LDFLAGS) -o $@ $^
+
+%.c.asm: %.c
+	$(C88) $(CFLAGS) -v -o $@ $<
+
+%.obj: %.asm
+	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
 
 %.obj: %.c
-	$(CC88) -Ml -c -v -I$(TOOLCHAIN_DIR)/include -o $@ $<
+	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
 
 .PHONY: clean
 clean:
-	rm -f $(OBJECTS) $(TARGET).out $(TARGET).abs $(TARGET).map
+	rm -f $(OBJS)
+	rm -f $(TARGET).out $(TARGET).abs $(TARGET).map $(TARGET).hex
+	rm -f $(TARGET).min
+	rm -f $(COMPILED_ASM)
