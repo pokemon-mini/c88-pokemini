@@ -6,9 +6,9 @@ ASM_SOURCES = src/startup.asm
 
 ifeq ($(OS), Windows_NT)
 	WINE :=
-	POKEMINID := $(TOOLCHAIN_DIR)/bin/PokeMiniD
-	SREC_CAT := $(TOOLCHAIN_DIR)/bin/srec_cat
-	POKEFLASH := $(TOOLCHAIN_DIR)/bin/pokeflash
+	POKEMINID := $(TOOLCHAIN_DIR)/bin-windows/PokeMiniD
+	SREC_CAT := $(TOOLCHAIN_DIR)/bin-windows/srec_cat
+	POKEFLASH := $(TOOLCHAIN_DIR)/bin-windows/pokeflash
 else # In Unix we use wine and assume the tools are in the PATH
 	WINE_PREFIX := $(realpath $(TOOLCHAIN_DIR)/wineprefix)
 	WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
