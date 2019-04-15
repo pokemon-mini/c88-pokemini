@@ -38,10 +38,7 @@ repository and build the toolchain.
 
 ``` bash
 # Ensure dependencies
-$ pacman -S git
-$ pacman -S curl
-$ pacman -S unzip
-
+$ pacman -S git unzip curl make
 # From here it goes as before
 $ git clone "https://github.com/pokemon-mini/c88-pokemini"
 $ cd c88-pokemini
