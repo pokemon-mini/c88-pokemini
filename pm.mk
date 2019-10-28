@@ -32,13 +32,23 @@ C88 := $(WINE) $(C88_DIR)/c88
 CC88 := $(WINE) $(C88_DIR)/cc88
 LC88 := $(WINE) $(C88_DIR)/lc88
 
-LDFLAGS += -Md -cl -v
-CFLAGS += -Md -g -I$(TOOLCHAIN_DIR)/include
+ifeq ($(MEM_MODEL), large)
+	LDFLAGS += -Ml
+	CFLAGS += -Ml
+else
+	LDFLAGS += -Md
+	CFLAGS += -Md
+endif
+
+LDFLAGS += -cl -v
+CFLAGS += -g -I$(TOOLCHAIN_DIR)/include
 LCFLAGS += -e -d pokemini -M
 
 OBJS += $(C_SOURCES:.c=.obj)
 OBJS += $(ASM_SOURCES:.asm=.obj)
 COMPILED_ASM = $(C_SOURCES:.c=.c.asm)
+
+.SUFFIXES:
 
 .PHONY: all, run, assembly
 all: $(TARGET).min
