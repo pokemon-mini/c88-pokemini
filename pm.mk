@@ -32,9 +32,12 @@ C88 := $(WINE) $(C88_DIR)/c88
 CC88 := $(WINE) $(C88_DIR)/cc88
 LC88 := $(WINE) $(C88_DIR)/lc88
 
-ifeq ($(MEM_MODEL), large)
-	LDFLAGS += -Ml
-	CFLAGS += -Ml
+LDFLAGS := -M
+CFLAGS := -M
+
+ifdef $(MEM_MODEL)
+	LDFLAGS += $(MEM_MODEL)
+	CFLAGS += $(MEM_MODEL)
 else
 	LDFLAGS += -Md
 	CFLAGS += -Md
