@@ -1,4 +1,5 @@
 ## Copyright 2019 Jose I Romero
+## Copyright 2021 Sapphire Becker
 ##
 ## Permission to use, copy, modify, and/or distribute this software
 ## for any purpose with or without fee is hereby granted, provided
@@ -14,77 +15,69 @@
 ## TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 ## PERFORMANCE OF THIS SOFTWARE.
 
-ifeq ($(OS), Windows_NT)
-	WINE :=
-	POKEMINID := $(TOOLCHAIN_DIR)/bin-windows/PokeMiniD
-	SREC_CAT := $(TOOLCHAIN_DIR)/bin-windows/srec_cat
-	POKEFLASH := $(TOOLCHAIN_DIR)/bin-windows/pokeflash
-else # In Unix we use wine and assume the tools are in the PATH
-	WINE_PREFIX := $(realpath $(TOOLCHAIN_DIR)/wineprefix)
-	WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
-	SREC_CAT := srec_cat
-	POKEMINID := PokeMiniD
-	POKEFLASH := pokeflash
+# Use this to build with WINE: mk88 WINE=1
+ifdef WINE
+WINE_PREFIX := $(realpath $(PRODDIR)/../wineprefix)
+WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
+else
+WINE :=
 endif
 
-C88_DIR := $(TOOLCHAIN_DIR)/c88tools/bin
-C88 := $(WINE) $(C88_DIR)/c88
-CC88 := $(WINE) $(C88_DIR)/cc88
-LC88 := $(WINE) $(C88_DIR)/lc88
+# You must define these in the PATH
+SREC_CAT := srec_cat
+POKEMINID := PokeMiniD
 
-ifeq ($(MEM_MODEL), large)
-	LDFLAGS += -Ml
-	CFLAGS += -Ml
+C88_DIR := $(PRODDIR)/bin
+C88 := $(separate " " $(WINE) $(C88_DIR)/c88.exe)
+CC88 := $(separate " " $(WINE) $(C88_DIR)/cc88.exe)
+LC88 := $(separate " " $(WINE) $(C88_DIR)/lc88.exe)
+
+RM := $(exist /bin/rm rm -f)$(nexist /bin/rm cmd /V:ON /C "del /f)
+
+ifdef LARGE_MEM_MODEL
+LDFLAGS += -Ml
+CFLAGS += -Ml
 else
-	LDFLAGS += -Md
-	CFLAGS += -Md
+LDFLAGS += -Md
+CFLAGS += -Md
 endif
 
 LDFLAGS += -cl -v
-CFLAGS += -g -I$(TOOLCHAIN_DIR)/include
+CFLAGS += -g -I$(PRODDIR)/../include
 LCFLAGS += -e -d pokemini -M
 
-OBJS += $(C_SOURCES:.c=.obj)
-OBJS += $(ASM_SOURCES:.asm=.obj)
-COMPILED_ASM = $(C_SOURCES:.c=.c.asm)
-
 .SUFFIXES:
+.SUFFIXES: .min .hex .map .abs .c .asm .obj .out
 
-.PHONY: all, run, assembly
 all: $(TARGET).min
 
-assembly: $(COMPILED_ASM)
-
 run: $(TARGET).min
-	$(POKEMINID) $<
+	$(POKEMINID) $! 
 
-flash: $(TARGET).min
-	$(POKEFLASH) /w $<
+$(TARGET).min: $(TARGET).hex
+$(TARGET).hex: $(TARGET).out
 
-%.min: %.hex
+.hex.min:
 	$(SREC_CAT) $< -o $@ -binary
 
-%.hex %.map: %.out
+.out.hex:
 	$(LC88) $(LCFLAGS) -f2 -o $@ $<
 
-%.abs %.map: %.out
-	$(LC88) $(LCFLAGS) -o $@ $<
-
 $(TARGET).out: $(OBJS)
-	$(CC88) $(LDFLAGS) -o $@ $^
+	$(CC88) $(LDFLAGS) -o $@ $!
 
-%.c.asm: %.c
+.c.asm:
 	$(C88) $(CFLAGS) -v -o $@ $<
 
-%.obj: %.asm
+.asm.obj:
 	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
 
-%.obj: %.c
+.c.obj:
 	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
 
-.PHONY: clean
 clean:
-	rm -f $(OBJS)
-	rm -f $(TARGET).out $(TARGET).abs $(TARGET).map $(TARGET).hex
-	rm -f $(TARGET).min
-	rm -f $(COMPILED_ASM)
+	$(exist /bin/rm $(RM) $(OBJS))
+	# del does not accept / path separator
+	$(nexist /bin/rm set OBJS="$(separate "\" \"" $(OBJS))"&& $(RM) !OBJS:/=\!)
+	$(RM) $(TARGET).out $(TARGET).abs $(TARGET).map $(TARGET).hex
+	$(RM) $(TARGET).min
