@@ -1,7 +1,5 @@
-TOOLCHAIN_DIR := ../..
 TARGET = helloworld
 
-C_SOURCES = src/isr.c src/main.c
-ASM_SOURCES = src/startup.asm
+OBJS = src/isr.obj src/main.obj src/startup.obj
 
-include $(TOOLCHAIN_DIR)/pm.mk
+include $(PRODDIR)/../pm.mk
