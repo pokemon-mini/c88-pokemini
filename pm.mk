@@ -27,6 +27,7 @@ endif
 SREC_CAT := srec_cat
 POKEMINID := PokeMiniD
 
+# Separate is used here because otherwise MK88 tries to include the space in the filename
 C88_DIR := $(PRODDIR)/bin
 C88 := $(separate " " $(WINE) $(C88_DIR)/c88.exe)
 CC88 := $(separate " " $(WINE) $(C88_DIR)/cc88.exe)
