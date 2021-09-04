@@ -53,24 +53,26 @@ OBJS += $(ASM_SOURCES:.asm=.obj)
 COMPILED_ASM = $(C_SOURCES:.c=.s)
 
 .SUFFIXES:
-.SUFFIXES: .min .hex .map .abs .c .c.asm .asm .obj .out
+.SUFFIXES: .min .hex .map .abs .c .asm .obj .out
 
 .PHONY: all, run, assembly
-
-.DEFAULT: all
 
 all: $(TARGET).min
 
 assembly: $(COMPILED_ASM)
 
 run: $(TARGET).min
-	$(POKEMINID) $(TARGET).min
+	$(POKEMINID) $!
 
 $(TARGET).min: $(TARGET).hex
-	$(SREC_CAT) $(TARGET).hex -o $@ -binary
 
 $(TARGET).hex $(TARGET).map: $(TARGET).out
-	$(LC88) $(LCFLAGS) -f2 -o $@ $(TARGET).out
+
+.hex.min:
+	$(SREC_CAT) $< -o $@ -binary
+
+.out.hex:
+	$(LC88) $(LCFLAGS) -f2 -o $@ $<
 
 $(TARGET).out: $(OBJS)
 	$(CC88) $(LDFLAGS) -o $@ $!
