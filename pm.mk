@@ -1,5 +1,5 @@
 ## Copyright 2019 Jose I Romero
-## Copyright 2021 Sapphire Becker
+## Copyright 2021 Sapphire Becker, Jhynjhiruu
 ##
 ## Permission to use, copy, modify, and/or distribute this software
 ## for any purpose with or without fee is hereby granted, provided
@@ -19,13 +19,14 @@
 ifdef WINE
 WINE_PREFIX := $(realpath $(PRODDIR)/../wineprefix)
 WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
-else
-WINE :=
-endif
-
 # You must define these in the PATH
 SREC_CAT := srec_cat
 POKEMINID := PokeMiniD
+else
+WINE :=
+SREC_CAT := $(PRODDIR)/../bin-windows/srec_cat
+POKEMINID := $(PRODDIR)/../bin-windows/PokeMiniD
+endif
 
 # Separate is used here because otherwise MK88 tries to include the space in the filename
 C88_DIR := $(PRODDIR)/bin
@@ -35,9 +36,9 @@ LC88 := $(separate " " $(WINE) $(C88_DIR)/lc88.exe)
 
 RM := $(exist /bin/rm rm -f)$(nexist /bin/rm cmd /V:ON /C "del /f)
 
-ifdef LARGE_MEM_MODEL
-LDFLAGS += -Ml
-CFLAGS += -Ml
+ifdef MEM_MODEL
+LDFLAGS += -M$(MEM_MODEL)
+CFLAGS += -M$(MEM_MODEL)
 else
 LDFLAGS += -Md
 CFLAGS += -Md
@@ -47,16 +48,25 @@ LDFLAGS += -cl -v
 CFLAGS += -g -I$(PRODDIR)/../include
 LCFLAGS += -e -d pokemini -M
 
+OBJS += $(C_SOURCES:.c=.obj)
+OBJS += $(ASM_SOURCES:.asm=.obj)
+COMPILED_ASM = $(C_SOURCES:.c=.s)
+
 .SUFFIXES:
 .SUFFIXES: .min .hex .map .abs .c .asm .obj .out
 
+.PHONY: all, run, assembly
+
 all: $(TARGET).min
 
+assembly: $(COMPILED_ASM)
+
 run: $(TARGET).min
-	$(POKEMINID) $! 
+	$(POKEMINID) $!
 
 $(TARGET).min: $(TARGET).hex
-$(TARGET).hex: $(TARGET).out
+
+$(TARGET).hex $(TARGET).map: $(TARGET).out
 
 .hex.min:
 	$(SREC_CAT) $< -o $@ -binary
@@ -67,7 +77,7 @@ $(TARGET).hex: $(TARGET).out
 $(TARGET).out: $(OBJS)
 	$(CC88) $(LDFLAGS) -o $@ $!
 
-.c.asm:
+.c.s:
 	$(C88) $(CFLAGS) -v -o $@ $<
 
 .asm.obj:
