@@ -15,45 +15,59 @@
 ## TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 ## PERFORMANCE OF THIS SOFTWARE.
 
-# Use this to build with WINE: mk88 WINE=1
-ifdef WINE
-WINE_PREFIX := $(realpath $(PRODDIR)/../wineprefix)
-WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
 # You must define these in the PATH
-SREC_CAT := srec_cat
 POKEMINID := PokeMiniD
+
+is_$(MAKE) := true
+ifdef is_mk88
+
+NULERR := 2>nul
+
+# So you don't need to edit the PATH variable normally...
+# cc88 can't seem to find the tools without this in PATH, but
+# only when run from mk88. Finds them fine from GNU make?
+PFX = set PATH=$(PRODDIR)\bin&&
+CC = $(PFX) cc88
+LC = $(PFX) lc88
+
+ifdef TERM
+# Running in wine on Linux or Mac, escape for srec_cat
+SREC_CAT := start /unix /bin/sh -c "srec_cat
+SREC_CAT_END := >&2"
 else
-WINE :=
-SREC_CAT := $(PRODDIR)/../bin-windows/srec_cat
-POKEMINID := $(PRODDIR)/../bin-windows/PokeMiniD
+# mk88 on Windows
+SREC_CAT := $(PRODDIR)\..\bin-windows\srec_cat
 endif
 
-# Separate is used here because otherwise MK88 tries to include the space in the filename
-C88_DIR := $(PRODDIR)/bin
-C88 := $(separate " " $(WINE) $(C88_DIR)/c88.exe)
-CC88 := $(separate " " $(WINE) $(C88_DIR)/cc88.exe)
-LC88 := $(separate " " $(WINE) $(C88_DIR)/lc88.exe)
+else
 
-RM := $(exist /bin/rm rm -f)$(nexist /bin/rm cmd /V:ON /C "del /f)
+# GNU make, probably
+BASE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+include $(BASE_DIR)/pm_gnu.mk
+
+endif
+
+AS = $(CC)
+LD = $(CC)
 
 ifdef MEM_MODEL
 LDFLAGS += -M$(MEM_MODEL)
-CFLAGS += -M$(MEM_MODEL)
+CCFLAGS += -M$(MEM_MODEL)
 else
 LDFLAGS += -Md
-CFLAGS += -Md
+CCFLAGS += -Md
 endif
 
-LDFLAGS += -cl -v
-CFLAGS += -g -I$(PRODDIR)/../include
-LCFLAGS += -e -d pokemini -M
+LDFLAGS += -v
+CCFLAGS += -g -I"$(PRODDIR)\..\include" -Tc-v -v
+ASFLAGS = $(CCFLAGS)
+LCFLAGS += -e -d pokemini -M -f2
 
 OBJS += $(C_SOURCES:.c=.obj)
 OBJS += $(ASM_SOURCES:.asm=.obj)
-COMPILED_ASM = $(C_SOURCES:.c=.s)
+COMPILED_ASM = $(C_SOURCES:.c=.src)
 
-.SUFFIXES:
-.SUFFIXES: .min .hex .map .abs .c .asm .obj .out
+.SUFFIXES: .min .sre .out
 
 .PHONY: all, run, assembly
 
@@ -64,31 +78,23 @@ assembly: $(COMPILED_ASM)
 run: $(TARGET).min
 	$(POKEMINID) $!
 
-$(TARGET).min: $(TARGET).hex
+$(TARGET).min: $(TARGET).sre
+$(TARGET).sre $(TARGET).map: $(TARGET).out
 
-$(TARGET).hex $(TARGET).map: $(TARGET).out
-
-.hex.min:
+.sre.min:
 	$(SREC_CAT) $< -o $@ -binary
 
-.out.hex:
-	$(LC88) $(LCFLAGS) -f2 -o $@ $<
+# For whatever reason, -Tcl can't forward -d arg, so we have to call lc88 directly
+.out.sre:
+	$(LC) -o $@ $(LCFLAGS) $<
 
 $(TARGET).out: $(OBJS)
-	$(CC88) $(LDFLAGS) -o $@ $!
+	$(CC) -cl $(LDFLAGS) -o $@ $(OBJS)
 
-.c.s:
-	$(C88) $(CFLAGS) -v -o $@ $<
-
-.asm.obj:
-	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
-
-.c.obj:
-	$(CC88) $(CFLAGS) -Tc-v -c -v -o $@ $<
+.c.src:
+	$(CC) $(CCFLAGS) -cs -Tc"-o $@" $<
 
 clean:
-	$(exist /bin/rm $(RM) $(OBJS))
-	# del does not accept / path separator
-	$(nexist /bin/rm set OBJS="$(separate "\" \"" $(OBJS))"&& $(RM) !OBJS:/=\!)
-	$(RM) $(TARGET).out $(TARGET).abs $(TARGET).map $(TARGET).hex
-	$(RM) $(TARGET).min
+	$(RM) $(OBJS) $(NULERR)
+	$(RM) $(TARGET).out $(TARGET).sre $(TARGET).map $(TARGET).hex $(NULERR)
+	$(RM) $(TARGET).min $(NULERR)

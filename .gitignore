@@ -4,3 +4,8 @@ c88tools
 temp-setup
 *.zip
 *~
+*.min
+*.sre
+*.map
+*.out
+*.obj
