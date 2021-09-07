@@ -29,15 +29,7 @@ NULERR := 2>nul
 PFX = set PATH=$(PRODDIR)\bin&&
 CC = $(PFX) cc88
 LC = $(PFX) lc88
-
-ifdef TERM
-# Running in wine on Linux or Mac, escape for srec_cat
-SREC_CAT := start /unix /bin/sh -c "srec_cat
-SREC_CAT_END := >&2"
-else
-# mk88 on Windows
-SREC_CAT := $(PRODDIR)\..\bin-windows\srec_cat
-endif
+SREC_CAT := set PRODDIR=$(PRODDIR)&& call $(PRODDIR)\..\srec_cat
 
 else
 
