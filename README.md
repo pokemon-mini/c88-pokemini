@@ -66,7 +66,7 @@ You may use CMD, MSYS, or a Linux shell emulator. It's recommended to have c88to
 
 ### Commands
 
-The makefile comes with the following commands:
+The makefile comes with the following targets:
 
 * `all` - the default, build the min
 * `clean` - clean up all the build object
