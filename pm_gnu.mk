@@ -20,8 +20,6 @@
 .SUFFIXES: .c .asm .obj .abs
 PRODDIR := $(BASE_DIR)/c88tools
 
-NULERR := 2>$(or $(realpath /dev/null),nul)
-
 ifeq ($(OS), Windows_NT)
 # Windows
 CC = $(PRODDIR)/bin/cc88.exe
@@ -38,9 +36,12 @@ SREC_CAT := srec_cat
 endif
 
 ifeq ($(findstring rm,$(RM)), rm)
+RM := rm -f
 # Change the path separator
 C_SOURCES := $(subst \,/,$(C_SOURCES))
 ASM_SOURCES := $(subst \,/,$(ASM_SOURCES))
+else
+RM := $(BASE_DIR)\rm.bat
 endif
 
 .asm.obj:

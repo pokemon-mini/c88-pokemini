@@ -21,7 +21,7 @@ POKEMINID := PokeMiniD
 is_$(MAKE) := true
 ifdef is_mk88
 
-NULERR := 2>nul
+RM := $(PRODDIR)\..\rm.bat
 
 # So you don't need to edit the PATH variable normally...
 # cc88 can't seem to find the tools without this in PATH, but
@@ -87,6 +87,6 @@ $(TARGET).out: $(OBJS)
 	$(CC) $(CCFLAGS) -cs -Tc"-o $@" $<
 
 clean:
-	$(RM) $(OBJS) $(NULERR)
-	$(RM) $(TARGET).out $(TARGET).sre $(TARGET).map $(TARGET).hex $(NULERR)
-	$(RM) $(TARGET).min $(NULERR)
+	$(RM) $(OBJS)
+	$(RM) $(TARGET).out $(TARGET).sre $(TARGET).map $(TARGET).hex
+	$(RM) $(TARGET).min
