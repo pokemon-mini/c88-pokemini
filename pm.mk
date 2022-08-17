@@ -29,7 +29,7 @@ RM := $(PRODDIR)\..\rm.bat
 PFX = set PATH=$(PRODDIR)\bin&&
 CC = $(PFX) cc88
 LC = $(PFX) lc88
-SREC_CAT := set PRODDIR=$(PRODDIR)&& call $(PRODDIR)\..\srec_cat
+SREC_CAT := $(PRODDIR)\..\srec_cat.bat
 
 else
 
@@ -50,16 +50,15 @@ LDFLAGS += -Md
 CCFLAGS += -Md
 endif
 
-LDFLAGS += -v
-CCFLAGS += -g -I"$(PRODDIR)\..\include" -Tc-v -v
+LDFLAGS += -v -d pokemini -Tlc"-e -M -f2"
+CCFLAGS += -I"$(PRODDIR)\..\include" -Tc-v -v
 ASFLAGS = $(CCFLAGS)
-LCFLAGS += -e -d pokemini -M -f2
 
 OBJS += $(C_SOURCES:.c=.obj)
 OBJS += $(ASM_SOURCES:.asm=.obj)
 COMPILED_ASM = $(C_SOURCES:.c=.src)
 
-.SUFFIXES: .min .sre .out
+.SUFFIXES: .min .sre
 
 .PHONY: all, run, assembly
 
@@ -71,17 +70,12 @@ run: $(TARGET).min
 	$(POKEMINID) $!
 
 $(TARGET).min: $(TARGET).sre
-$(TARGET).sre $(TARGET).map: $(TARGET).out
 
 .sre.min:
 	$(SREC_CAT) $< -o $@ -binary
 
-# For whatever reason, -Tcl can't forward -d arg, so we have to call lc88 directly
-.out.sre:
-	$(LC) -o $@ $(LCFLAGS) $<
-
-$(TARGET).out: $(OBJS)
-	$(CC) -cl $(LDFLAGS) -o $@ $(OBJS)
+$(TARGET).sre: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 
 .c.src:
 	$(CC) $(CCFLAGS) -cs -Tc"-o $@" $<
