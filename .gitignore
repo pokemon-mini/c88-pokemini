@@ -9,3 +9,7 @@ temp-setup
 *.map
 *.out
 *.obj
+
+# User configs
+config.sh
+config.ps1

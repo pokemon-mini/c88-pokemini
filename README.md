@@ -11,54 +11,48 @@ The aim of this project is to provide a multi-platform toolchain for developing 
 These packages must be installed in your system (and be available in your PATH) to run all the scripts and make files:
 
 * `git` for cloning this repository.
-* GNU `make` - for running the installer Makefile
 * `curl`, `unzip` - for downloading and extracting the  the installer
 * `wine` - for running the TASKING C compiler for S1C88
-* `unshield` - for extracting the compilers out of the installer
+  * The installer will attempt to install it for you, if it's not
 * `srec_cat` (from the `srecord` package) - for converting the locator
   output to .min
-* `PokeMiniD` - for debugging the compiled .min images
 
 ```sh
-# On Ubuntu and other Debian-based distros
-sudo apt install make git curl wget unzip unshield srecord
-# ...for 32 bit versions:
-sudo apt install wine
-# ...for 64 bit versions:
-sudo apt purge wine
-sudo dpkg --add-architecture i386
-wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu/ $(lsb_release -sc) main"
-sudo apt update && sudo apt install --install-recommends winehq-stable
+# On Ubuntu and other Debian-based distros, install the prereqs
+sudo apt install git curl wget unzip srecord
 
-# Install pokemini dev (make sure to have $HOME/.local/bin in PATH)
-curl -Lo pokemini_060_linux32dev.zip https://sourceforge.net/projects/pokemini/files/0.60/pokemini_060_linux32dev.zip/download
-unzip pokemini_060_linux32dev.zip PokeMiniD -d ~/.local/bin
+# Install these tools (and wine, if it's not)
+./install.sh
 
-# Install these tools
-git clone "https://github.com/pokemon-mini/c88-pokemini"
-cd c88-pokemini
-make
+# Install PokeMini emulator
+./install.sh pokemini
+
+# List other things you can install
+./install.sh --list
+
+# More info
+./install.sh --help
 ```
 
 ### Windows
 
-Windows is supported through MSYS2, just install the base system from https://www.msys2.org/ You then can use the msys2 shell to clone this repository and build the toolchain.
+```ps1
+# Install these tools
+.\install.ps1
 
-Some tools are downloaded automatically by the setup script: unshield, srec_cat, PokeMiniD. You must place the PokeMiniD location on your PATH in order to use `mk88 run` in projects, whether it's your own version or the included one.
+# Install PokeMini emulator
+.\install.ps1 pokemini
 
-```sh
-# Ensure dependencies
-pacman -S git unzip curl make
-# From here it goes as before
-git clone "https://github.com/pokemon-mini/c88-pokemini"
-cd c88-pokemini
-make # The makefile will automatically download dependencies and build the toolchain folder
+# List other things you can install
+.\install.ps1 -list
+
+# More info
+Get-Help .\install.ps1
 ```
 
 ### OSX
 
-OSX no longer supports running 32 bit binaries, so running the suite on the bare OS is not possible. You will have to run them in a VM.
+OSX no longer supports running 32 bit binaries as of Catalina, so running the suite on the bare OS is not possible. You will have to run them in a VM. If you have an earlier version of the OS, you can try the linux installer.
 
 ## Building the example
 
