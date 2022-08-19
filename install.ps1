@@ -63,6 +63,7 @@ function Add-Config {
 	)
 
 	Write-Host 'Saving to config...'
+	Set-Variable $Name $Value -Scope Global
 	Write-Output "`$$Name = `"$Value`"" | Out-File config.ps1 -Encoding utf8 -Append
 }
 
