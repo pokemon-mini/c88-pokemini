@@ -5,7 +5,6 @@ VERSION=0.0.1
 cwd="$(pwd)"
 cd "$(dirname "$0")"
 touch config.sh
-cd "installers"
 
 # Commands
 cmd=
@@ -30,9 +29,9 @@ case "$1" in
 		exit 0
 		;;
 	-l | --list)
-		for x in *.sh; do
+		for x in installers/*.sh; do
 			echo -n "$(basename "$x" .sh): "
-			./"$x" --description
+			./installers/"$x" --description
 		done
 		cd "$cwd"
 		exit 0
@@ -65,9 +64,9 @@ esac
 tool="$1"
 [ "$tool" ] || tool="c88tools"
 
-if [ -f "${tool}.sh" ]; then
+if [ -f "installers/${tool}.sh" ]; then
 	[ "$start" ] && echo "${start} ${tool}..."
-	if ./"${tool}.sh" $cmd; then
+	if ./installers/"${tool}.sh" $cmd; then
 		[ "$success" ] && echo "$success"
 	else
 		[ "$failure" ] && echo "$failure"

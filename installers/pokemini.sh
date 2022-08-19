@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ../config.sh
+source config.sh
+source installers/inc/common.sh
 
 DOWNLOAD_URL='https://sourceforge.net/projects/pokemini/files/0.60/pokemini_060_linux32dev.zip/download'
 
@@ -20,8 +21,7 @@ case "$1" in
 		;;
 	--uninstall)
 		rm -rf "$pokemini"
-		grep --invert-match '^pokemini=' ../config.sh > ../tmp
-		mv ../tmp ../config.sh
+		remove_config pokemini
 		echo 'You will have to remove any entry in the path variable yourself.'
 		exit 0
 		;;
@@ -41,11 +41,11 @@ for x in curl unzip realpath; do
 done
 
 curl -Lo /tmp/pokemini_linux32dev.zip "$DOWNLOAD_URL"
-unzip /tmp/pokemini_linux32dev.zip -d ../tools/pokemini
+unzip /tmp/pokemini_linux32dev.zip -d tools/pokemini
 
-pokemini="$(realpath '../tools/pokemini')"
+pokemini="$(realpath 'tools/pokemini')"
 echo 'Saving to config...'
-echo "pokemini=\"$pokemini\"" >> ../config.sh
+echo "pokemini=\"$pokemini\"" >> config.sh
 
 echo 'Add PokeMini to your path with:'
 echo "  PATH=\"\$PATH:$pokemini/bin\""

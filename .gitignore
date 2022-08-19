@@ -1,6 +1,8 @@
 bin-windows
+wine
 wineprefix
 c88tools
+tools
 temp-setup
 *.zip
 *~

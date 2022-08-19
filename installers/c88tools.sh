@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ../config.sh
+source config.sh
+source installers/inc/common.sh
 
 DOWNLOAD_URL='https://github.com/logicplace/c88-pokemini/releases/download/s1c88/c88tools.zip'
 
@@ -28,8 +29,7 @@ case "$1" in
 		;;
 	--uninstall)
 		rm -rf "$c88tools"
-		grep --invert-match '^c88tools=' ../config.sh > ../tmp
-		mv ../tmp ../config.sh
+		remove_config c88tools
 		echo 'You will have to remove any entry in the path variable yourself.'
 		exit 0
 		;;
@@ -41,8 +41,8 @@ esac
 # Check if it's already installed
 [ "$c88tools" ] && exit 0  # From config
 
-if [ ! -d ../c88tools ]; then
-	if ! ./wine.sh; then
+if [ ! -d c88tools ]; then
+	if ! ./installers/wine.sh; then
 		echo "Could not install dependency: wine"
 		exit 1
 	fi
@@ -55,12 +55,12 @@ if [ ! -d ../c88tools ]; then
 	done
 
 	curl -Lo /tmp/c88tools.zip "$DOWNLOAD_URL"
-	unzip /tmp/c88tools.zip -d ../c88tools
-	find ../c88tools -type f -name '*.exe' -exec chmod 0755 {} \;
+	unzip /tmp/c88tools.zip -d c88tools
+	find c88tools -type f -name '*.exe' -exec chmod 0755 {} \;
 fi
 
-c88path=$(realpath "../c88tools")
-echo "c88tools=\"$c88path\"" >> ../config.sh
+c88tools=$(realpath "c88tools")
+echo "c88tools=\"$c88tools\"" >> config.sh
 
 echo "Add the S1C88 tools to your path with:"
-echo "  PATH=\"\$PATH:$c88path/bin\""
+echo "  PATH=\"\$PATH:$c88tools/bin\""

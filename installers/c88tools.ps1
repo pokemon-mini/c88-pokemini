@@ -7,8 +7,6 @@ param(
 [string] $prefix
 )
 
-. ..\config.ps1
-
 $DOWNLOAD_URL='https://github.com/logicplace/c88-pokemini/releases/download/s1c88/c88tools.zip'
 
 if ($prefix) {
@@ -29,25 +27,21 @@ if ($prefix) {
 	}
 } elseif ($uninstall) {
 	if ($c88tools) {
-		Remove-Item "$c88tools" -Force -Recurse -ErrorAction SilentlyContinue
-		Set-Content -Path '..\config.ps1' -Value (Get-Content -Path '..\config.ps1' | Select-String -Pattern '^\$c88tools =' -NotMatch)
+		Remove-Item $c88tools -Force -Recurse -ErrorAction SilentlyContinue
+		Remove-Config 'c88tools'
 		Write-Host 'You will have to remove any entry in the path variable yourself.'
 	}
 } elseif (! $c88tools) {
 	Write-Host 'Downloading...'
-	Invoke-WebRequest -Uri "$DOWNLOAD_URL" -OutFile '..\c88tools.zip'
+	Download $DOWNLOAD_URL 'c88tools.zip'
 	Write-Host 'Unzipping...'
-	Expand-Archive -Path '..\c88tools.zip' -DestinationPath '..\c88tools'
-	Remove-Item -Path '..\c88tools.zip'
-	$c88tools = Resolve-Path '..\c88tools'
-	Write-Host 'Saving to config...'
-	Write-Output "`$c88tools = `"$c88tools`"" >> '..\config.ps1'
+	Expand-Archive -Path 'c88tools.zip' -DestinationPath 'c88tools'
+	Remove-Item -Path 'c88tools.zip'
+	$c88tools = Resolve-Path 'c88tools'
+	Add-Config 'c88tools' $c88tools
 
-	$yn = Read-Host 'Set environment variables for the build tools (y/n)?'
-	if ($yn -eq 'y') {
-		$userpath = Get-ItemProperty -Path HKCU:\Environment -Name Path
-		setx Path "$($userpath.Path);$c88tools\bin"
-		$env:PATH = "$env:PATH;$c88tools\bin"
+	if (Read-YN 'Set environment variables for the build tools') {
+		Update-Path "$c88tools\bin"
 		setx C88INC $c88tools\include
 		setx C88LIB $c88tools\lib
 		$env:C88INC = "$c88tools\include"
@@ -61,4 +55,4 @@ if ($prefix) {
 	}
 }
 
-exit 0
+return $true

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ../config.sh
+source config.sh
+source installers/inc/common.sh
 
 # Standard info queries
 uninstall=
@@ -26,8 +27,7 @@ case "$1" in
 			echo "Can only uninstall wine with the package managers: apt, brew"
 			exit 1
 		fi
-		grep --invert-match '^wine32=' ../config.sh > ../tmp
-		mv ../tmp ../config.sh
+		remove_config wine32
 		exit 0
 		;;
 	--*)
@@ -43,12 +43,12 @@ purge=
 if which wine; then
 	case "$(file "$(which wine)")" in
 		*32-bit* | *i386*)
-			echo "wine32=\"$(which wine)\"" >> ../config.sh
+			echo "wine32=\"$(which wine)\"" >> config.sh
 			exit 0
 			;;
 		*' ELF '*) purge=1; ;;
 		*'symbolic link'*)
-			grep -m1 wine32 "$(realpath "$(which wine)")" >> ../config.sh && exit 0
+			grep -m1 wine32 "$(realpath "$(which wine)")" >> config.sh && exit 0
 			;&
 		*)
 			echo "Unknown wine install. If the 32-bit version of Wine is already installed, set wine32 to the full path config.sh"
@@ -59,7 +59,7 @@ fi
 
 if which apt; then
 	if [[ "$(uname -m)" == 'x86_64' ]]; then
-		for x in dpkg wget; do
+		for x in dpkg wget apt-add-repository; do
 			if ! which $x; then
 				echo "Requires system utility to install: $x"
 				exit 1
@@ -86,6 +86,6 @@ fi
 
 pfx="$(dirname "$(pwd)")/wineprefix"
 mkdir "$pfx"
-echo "#!/bin/sh" > ../wine
-echo "WINEARCH=win32 WINEPREFIX=$pfx wineboot" >> ../wine
-chmod 755 ../wine
+echo "#!/bin/sh" > wine
+echo "WINEARCH=win32 WINEPREFIX=$pfx wineboot" >> wine
+chmod 755 wine

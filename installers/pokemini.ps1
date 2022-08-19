@@ -7,8 +7,6 @@ param(
 [string] $prefix
 )
 
-. ..\config.ps1
-
 $DOWNLOAD_URL='https://sourceforge.net/projects/pokemini/files/0.60/pokemini_060_windev.zip/download'
 
 if ($prefix) {
@@ -17,86 +15,48 @@ if ($prefix) {
 		exit 1
 	}
 
-	Write-Output "$pokemini"
+	Write-Output $pokemini
 } elseif ($uninstall) {
 	if ($pokemini) {
-		Remove-Item "$pokemini" -Force -Recurse -ErrorAction SilentlyContinue
-		Set-Content -Path '..\config.ps1' -Value (Get-Content -Path '..\config.ps1' | Select-String -Pattern '^\$pokemini =' -NotMatch)
-		Remove-Item -Path HKCR:\.min, HKCR:\.minc, HKCR:\PokeMini_min, HKCR:\PokeMini_minc -Recurse -ErrorAction SilentlyContinue
+		Remove-Item $pokemini -Force -Recurse -ErrorAction SilentlyContinue
+		Remove-Config 'pokemini'
+		. .\installers\inc\registry.ps1
+		Unregister-FileExtension 'min'
 	}
 } elseif (! $pokemini) {
 	Write-Host 'Downloading...'
-	Invoke-WebRequest -Uri "$DOWNLOAD_URL" -OutFile '..\pokemini_windev.zip' -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox
+	Download $DOWNLOAD_URL 'pokemini_windev.zip'
 	Write-Host 'Unzipping...'
-	Expand-Archive -Path '..\pokemini_windev.zip' -DestinationPath '..\tools\pokemini'
-	Remove-Item -Path '..\pokemini_windev.zip'
-	$pokemini = Resolve-Path '..\tools\pokemini'
-	Write-Host 'Saving to config...'
-	Write-Output "`$pokemini = `"$pokemini`"" >> '..\config.ps1'
+	Expand-Archive -Path 'pokemini_windev.zip' -DestinationPath 'tools\pokemini'
+	Remove-Item -Path 'pokemini_windev.zip'
+	$pokemini = Resolve-Path 'tools\pokemini'
+	Add-Config 'pokemini' $pokemini
 
-	$yn = Read-Host 'Set path environment variable for Pokemini (y/n)?'
-	if ($yn -eq 'y') {
-		$userpath = Get-ItemProperty -Path HKCU:\Environment -Name Path
-		setx Path "$($userpath.Path);$pokemini"
-		set PATH "$env:PATH;$pokemini"
+	if (Read-YN 'Set path environment variable for Pokemini') {
+		Update-Path $pokemini
 		Write-Host '...done'
 	} else {
 		Write-Host "You can always add this folder to your PATH variable later:"
 		Write-Host "  $pokemini"
 	}
 
-	$yn = Read-Host 'Associate .min files with PokeMini (y/n)?'
-	if ($yn -eq 'y') {
-		$exe = "$pokemini\PokeMini.exe" -replace '\\', '\\'
-		$dbg = "$pokemini\PokeMiniD.exe" -replace '\\', '\\'
-		$color = "$pokemini\color_mapper.exe" -replace '\\', '\\'
-		Write-Output @"
-Windows Registry Editor Version 5.00
-
-[HKEY_CLASSES_ROOT\.min]
-@="PokeMini_min"
-
-[HKEY_CLASSES_ROOT\.minc]
-@="PokeMini_minc"
-
-
-[HKEY_CLASSES_ROOT\PokeMini_min]
-@="Pokemon mini ROM"
-
-[HKEY_CLASSES_ROOT\PokeMini_min\DefaultIcon]
-@="$exe,1"
-
-[HKEY_CLASSES_ROOT\PokeMini_min\shell]
-@="debug"
-
-[HKEY_CLASSES_ROOT\PokeMini_min\shell\open]
-
-[HKEY_CLASSES_ROOT\PokeMini_min\shell\open\command]
-@="\"$exe\" \"%1\""
-
-[HKEY_CLASSES_ROOT\PokeMini_min\shell\debug]
-@="&Debug"
-
-[HKEY_CLASSES_ROOT\PokeMini_min\shell\debug\command]
-@="\"$dbg\" \"%1\""
-
-
-[HKEY_CLASSES_ROOT\PokeMini_minc]
-@="PokeMini ROM color file"
-
-[HKEY_CLASSES_ROOT\PokeMini_minc\DefaultIcon]
-@="$exe,2"
-
-[HKEY_CLASSES_ROOT\PokeMini_minc\shell]
-
-[HKEY_CLASSES_ROOT\PokeMini_minc\shell\open]
-
-[HKEY_CLASSES_ROOT\PokeMini_minc\shell\open\command]
-@="\"$color\" \"%1\""
-"@ > '..\pokemini.reg'
-		if (Start-Process reg -ArgumentList 'import ..\pokemini.reg' -Verb runAs) {
-			Remove-Item -Path '..\pokemini.reg'
+	if (Read-YN 'Associate .min files with PokeMini') {
+		$exe = "$pokemini\PokeMini.exe"
+		$dbg = "$pokemini\PokeMiniD.exe"
+		$color = "$pokemini\color_mapper.exe"
+		. .\installers\inc\registry.ps1
+		Register-FileExtension 'min' -ProgID 'PokeMini_min' -Name 'Pokemon mini ROM' -Icon "`"$exe`",1" -Commands @{
+			open = "`"$exe`" `"%1`""
+			debug = @{
+				Name = '&Debug'
+				Command = "`"$dbg`" `"%1`""
+			}
+		}
+		Register-FileExtension 'minc' -ProgID 'PokeMini_minc' -Name 'PokeMini ROM color file' -Icon "`"$exe`",2" -Commands @{
+			open = "`"$color`" `"%1`""
 		}
 		Write-Host '...done'
 	}
 }
+
+return $true
