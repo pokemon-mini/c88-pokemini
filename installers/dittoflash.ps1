@@ -41,5 +41,3 @@ if ($prefix) {
 		}
 	}
 }
-
-return $true

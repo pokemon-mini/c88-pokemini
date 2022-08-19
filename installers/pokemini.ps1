@@ -58,5 +58,3 @@ if ($prefix) {
 		Write-Host '...done'
 	}
 }
-
-return $true

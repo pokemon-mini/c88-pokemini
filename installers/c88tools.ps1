@@ -54,5 +54,3 @@ if ($prefix) {
 		Write-Host "  C88LIB=$c88tools\lib"
 	}
 }
-
-return $true

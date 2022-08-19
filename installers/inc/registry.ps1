@@ -57,18 +57,10 @@ function Add-FileExtensionCommand {
 		[switch] $IsDefault
 	)
 
-	if (! $Verb) {
-		if ($Name) {
-			$Verb = $Name.ToLower() -replace '&', ''
-		} else {
-			return $false
-		}
-	}
-
 	$ProgID = Get-ItemPropertyValue "HKCU:\Software\Classes\.$Ext" -Name '(Default)'
 
 	if (! $ProgID) {
-		return $false
+		throw "$Ext extension not registered"
 	}
 
 	$UserShell = "HKCU:\Software\Classes\$ProgID\shell"
