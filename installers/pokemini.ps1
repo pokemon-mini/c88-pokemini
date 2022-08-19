@@ -32,7 +32,7 @@ if ($prefix) {
 	$pokemini = Resolve-Path 'tools\pokemini'
 	Add-Config 'pokemini' $pokemini
 
-	if (Read-YN 'Set path environment variable for Pokemini') {
+	if (Read-YN 'Set path environment variable for PokeMini') {
 		Update-Path $pokemini
 		Write-Host '...done'
 	} else {
