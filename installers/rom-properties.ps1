@@ -37,3 +37,5 @@ if ($prefix) {
 	Write-Host 'Select Yes then click Install'
 	& ".\$romprop\install.exe"
 }
+
+return $true
