@@ -1,7 +1,7 @@
 $CASE ON
         ;; Macro to add jump table elements
 JP_FAR  MACRO lbl
-        LD NB,#@DPAG(lbl)
+        LD NB,#@CPAG(lbl)
         JRL lbl
         ENDM
         
