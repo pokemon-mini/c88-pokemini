@@ -1,6 +1,8 @@
 bin-windows
+wine
 wineprefix
 c88tools
+tools
 temp-setup
 *.zip
 *~
@@ -9,3 +11,7 @@ temp-setup
 *.map
 *.out
 *.obj
+
+# User configs
+config.sh
+config.ps1
