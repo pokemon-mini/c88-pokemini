@@ -7,7 +7,7 @@ param(
 [string] $prefix
 )
 
-$DOWNLOAD_URL='https://github.com/logicplace/c88-pokemini/releases/download/s1c88/c88tools.zip'
+$DOWNLOAD_URL='https://github.com/pokemon-mini/c88-pokemini/releases/download/s1c88/c88tools.zip'
 
 if ($prefix) {
 	if (! $c88tools) {

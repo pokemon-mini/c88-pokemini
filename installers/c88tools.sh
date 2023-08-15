@@ -3,7 +3,7 @@
 source config.sh
 source installers/inc/common.sh
 
-DOWNLOAD_URL='https://github.com/logicplace/c88-pokemini/releases/download/s1c88/c88tools.zip'
+DOWNLOAD_URL='https://github.com/pokemon-mini/c88-pokemini/releases/download/s1c88/c88tools.zip'
 
 # Standard info queries
 case "$1" in
