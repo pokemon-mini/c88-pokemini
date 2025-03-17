@@ -8,9 +8,9 @@ param(
 )
 
 if ([Environment]::Is64BitOperatingSystem) {
-	$DOWNLOAD_URL = 'https://www.7-zip.org/a/7z2201-x64.exe'
+	$DOWNLOAD_URL = 'https://www.7-zip.org/a/7z2409-x64.exe'
 } else {
-	$DOWNLOAD_URL = 'https://www.7-zip.org/a/7z2201.exe'
+	$DOWNLOAD_URL = 'https://www.7-zip.org/a/7z2409.exe'
 }
 
 if ($prefix) {
