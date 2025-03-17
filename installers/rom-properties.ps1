@@ -7,7 +7,7 @@ param(
 [string] $prefix
 )
 
-$DOWNLOAD_URL='https://github.com/GerbilSoft/rom-properties/releases/download/v1.9/rom-properties_1.9-windows.zip'
+$DOWNLOAD_URL='https://github.com/GerbilSoft/rom-properties/releases/download/v2.4.1/rom-properties_2.4.1-windows.zip'
 
 if ($prefix) {
 	if (! $romprop) {
