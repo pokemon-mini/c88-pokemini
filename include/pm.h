@@ -240,7 +240,7 @@ typedef volatile struct {
 #define CLK_CPU_31250HZ 4
 #define CLK_CPU_15625HZ 5
 #define CLK_CPU_3906HZ  6
-#define CLK_CPU_976HZ   6
+#define CLK_CPU_976HZ   7
 
 _inline void wait_vsync(void) {
     IRQ_ACT1 = IRQ1_PRC_COMPLETE;
