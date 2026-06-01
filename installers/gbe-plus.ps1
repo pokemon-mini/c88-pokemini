@@ -7,7 +7,7 @@ param(
 [string] $prefix
 )
 
-$DOWNLOAD_URL='https://github.com/shonumi/gbe-plus/releases/download/1.9/gbe_1_9.7z'
+$DOWNLOAD_URL='https://github.com/shonumi/gbe-plus/releases/download/1.10/gbe_1_10.7z'
 
 if ($prefix) {
 	if (! $gbeplus) {
