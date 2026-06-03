@@ -12,16 +12,28 @@ These packages must be installed in your system (and be available in your PATH) 
 
 * `git` for cloning this repository.
 * `curl`, `unzip` - for downloading and extracting the  the installer
-* `wine` - for running the TASKING C compiler for S1C88
-  * The installer will attempt to install it for you, if it's not
+* `wine` or `wibo` - for running the TASKING C compiler for S1C88
+  * The installer will attempt to install wine for you, if it's not, it'll attempt to install wibo instead
+  * `wibo` only officially builds for and supports Linux i686 and x86_64 and newer OSX versions (Catalina and higher)
 * `srec_cat` (from the `srecord` package) - for converting the locator
   output to .min
+
+### OSX
+* Linux dependencies above plus the following:
+  * `coreutils` - for realpath command
+  * `bash` - for running the scripts; OSX doesn't always ship or update bash by default
 
 ```sh
 # On Ubuntu and other Debian-based distros, install the prereqs
 sudo apt install git curl wget unzip srecord
 
-# Install these tools (and wine, if it's not)
+# On Fedora and other RHEL-based distros, install the prereqs
+sudo dnf install git curl wget unzip srecord
+
+# On OSX
+brew install git curl wget unzip srecord bash coreutils
+
+# Install these tools (and wine or wibo, if neither are installed)
 ./install.sh
 
 # Install PokeMini emulator
@@ -32,6 +44,9 @@ sudo apt install git curl wget unzip srecord
 
 # More info
 ./install.sh --help
+
+# Optionally install Wibo even if Wine is installed
+./install.sh wibo
 ```
 
 ### Windows
@@ -49,10 +64,6 @@ sudo apt install git curl wget unzip srecord
 # More info
 Get-Help .\install.ps1
 ```
-
-### OSX
-
-OSX no longer supports running 32 bit binaries as of Catalina, so running the suite on the bare OS is not possible. You will have to run them in a VM. If you have an earlier version of the OS, you can try the linux installer.
 
 ## Building the example
 
@@ -77,7 +88,7 @@ cd examples/helloworld
 WINEARCH=win32 WINEPREFIX=../../wineprefix wine mk88
 # ...or...
 WINEARCH=win32 WINEPREFIX=../../wineprefix wine ../../c88tools/bin/mk88.exe
-# ...or with GNU make
+# ...or with GNU make (or using wibo)
 make
 ```
 
