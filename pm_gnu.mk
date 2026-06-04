@@ -28,7 +28,7 @@ SREC_CAT := $(PRODDIR)/../bin-windows/srec_cat.exe
 else
 
 # Check if wibo or wine are being currently used; default is wine
-ifeq (, $(shell ./$(BASE_DIR)/wibo))
+ifneq ("", "$(wildcard ./$(BASE_DIR)/wibo)")
 WINE := $(realpath $(BASE_DIR)/wibo)
 else
 WINE_PREFIX := $(realpath $(BASE_DIR)/wineprefix)
