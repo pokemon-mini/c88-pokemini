@@ -2,8 +2,6 @@
 
 The aim of this project is to provide a multi-platform toolchain for developing games for the Pokemon Mini in the C language.
 
-**Warning: Work in progress... Things can change drastically**
-
 ## System requirements
 
 ### Linux (not WSL)
