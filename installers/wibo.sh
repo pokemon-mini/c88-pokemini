@@ -15,7 +15,7 @@ case "$1" in
 		exit 0
 		;;
 	--uninstall)
-		if "./wibo"; then
+		if [ -e "./wibo" ]; then
 			rm -r wibo > /dev/null 2>&1
 			echo "wibo removed"
 		fi
