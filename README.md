@@ -19,9 +19,12 @@ These packages must be installed in your system (and be available in your PATH) 
   output to .min
 
 ### OSX
+
 * Linux dependencies above plus the following:
   * `coreutils` - for realpath command
   * `bash` - for running the scripts; OSX doesn't always ship or update bash by default
+
+### Linux / OSX commands
 
 ```sh
 # On Ubuntu and other Debian-based distros, install the prereqs
@@ -79,7 +82,7 @@ The makefile comes with the following targets:
 * `run` - build and run the min in PokeMiniD
 * `src/main.src` - build main.c to its assembler form (can do this with any C file)
 
-### Linux
+### Linux / OSX
 
 ```sh
 # Start in the example's directory
