@@ -27,8 +27,13 @@ LC = $(PRODDIR)/bin/lc88.exe
 SREC_CAT := $(PRODDIR)/../bin-windows/srec_cat.exe
 else
 
+# Check if wibo or wine are being currently used; default is wine
+ifneq ("", "$(wildcard $(BASE_DIR)/wibo)")
+WINE := $(realpath $(BASE_DIR)/wibo)
+else
 WINE_PREFIX := $(realpath $(BASE_DIR)/wineprefix)
 WINE := WINEARCH=win32 WINEPREFIX=$(WINE_PREFIX) wine
+endif
 
 CC = $(WINE) $(PRODDIR)/bin/cc88.exe
 LC = $(WINE) $(PRODDIR)/bin/lc88.exe

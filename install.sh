@@ -31,7 +31,7 @@ case "$1" in
 	-l | --list)
 		for x in installers/*.sh; do
 			echo -n "$(basename "$x" .sh): "
-			./installers/"$x" --description
+			./"$x" --description
 		done
 		cd "$cwd"
 		exit 0

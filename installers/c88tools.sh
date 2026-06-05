@@ -43,7 +43,7 @@ esac
 
 if [ ! -d c88tools ]; then
 	if ! ./installers/wine.sh; then
-		echo "Could not install dependency: wine"
+		echo "Could not install dependency: wine or wibo"
 		exit 1
 	fi
 
