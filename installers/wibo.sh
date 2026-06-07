@@ -15,7 +15,7 @@ case "$1" in
 		exit 0
 		;;
 	--uninstall)
-		if "./wibo"; then
+		if [ -e "./wibo" ]; then
 			rm -r wibo > /dev/null 2>&1
 			echo "wibo removed"
 		fi
@@ -49,7 +49,11 @@ else
 	exit 1
 fi
 
-rm -r wibo > /dev/null 2>&1
-curl -Lo wibo $wibo_url/wibo-$arch
-chmod 0755 wibo
-echo "wibo installed successfully"
+# Check if wibo is not installed locally; since it can be built from source for unsupported platforms, it needs to be allowed to exist here
+if [ ! -e "./wibo" ]; then
+	curl -Lo wibo $wibo_url/wibo-$arch
+	chmod 0755 wibo
+	echo "wibo installed successfully"
+else
+	echo "wibo currently already installed; if this was not intended, delete file and run script again"
+fi
